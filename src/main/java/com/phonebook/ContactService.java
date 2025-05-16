@@ -6,31 +6,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
-import io.micrometer.core.instrument.Counter;
 
 @Service
 public class ContactService {
     private final ContactRepository contactRepository;
-    private final Counter addCounter, searchCounter, deleteCounter, editCounter, listCounter, failedCounter, emptyCounter;
-    private final Timer searchTimer;
+    private final MetricService metricService;
 
     @Autowired
-    public ContactService(ContactRepository contactRepository, MeterRegistry registry) {
+    public ContactService(ContactRepository contactRepository, MetricService metricService) {
         this.contactRepository = contactRepository;
-        this.addCounter = registry.counter("phonebook.requests", "type", "add");
-        this.searchCounter = registry.counter("phonebook.requests", "type", "search");
-        this.deleteCounter = registry.counter("phonebook.requests", "type", "delete");
-        this.editCounter = registry.counter("phonebook.requests", "type", "edit");
-        this.listCounter = registry.counter("phonebook.requests", "type", "list");
-        this.failedCounter = registry.counter("phonebook.requests.failed");
-        this.emptyCounter = registry.counter("phonebook.requests.empty");
-        this.searchTimer = registry.timer("phonebook.search.timer");
+        this.metricService = metricService;
     }
 
     public List<ContactDTO> getContacts(int page, int size) {
-        listCounter.increment();
+        metricService.incrementList();
         return StreamSupport.stream(contactRepository.findAll().spliterator(), false)
                 .skip((long) page * size)
                 .limit(size)
@@ -44,32 +33,32 @@ public class ContactService {
     }
 
     public ContactDTO addContact(ContactDTO contact) {
-        addCounter.increment();
+        metricService.incrementAdd();
         contact.setId(contact.getFirstName() + "_" + contact.getLastName());
         return contactRepository.save(contact);
     }
 
     public Optional<ContactDTO> editContact(String id, ContactDTO contact) {
-        editCounter.increment();
+        metricService.incrementEdit();
         try {
             if (contactRepository.existsById(id)) {
                 contact.setId(id);
                 return Optional.of(contactRepository.save(contact));
             }
-            emptyCounter.increment();
+            metricService.incrementEmpty();
             return Optional.empty();
         } catch (Exception e) {
-            failedCounter.increment();
+            metricService.incrementFailed();
             throw e;
         }
     }
 
     public void deleteContact(String id) {
-        deleteCounter.increment();
+        metricService.incrementDelete();
         try {
             contactRepository.deleteById(id);
         } catch (Exception e) {
-            failedCounter.increment();
+            metricService.incrementFailed();
             throw e;
         }
     }
@@ -77,20 +66,20 @@ public class ContactService {
     public Optional<ContactDTO> getContactById(String id) {
         try {
             Optional<ContactDTO> result = contactRepository.findById(id);
-            if (result.isEmpty()) emptyCounter.increment();
+            if (result.isEmpty()) metricService.incrementEmpty();
             return result;
         } catch (Exception e) {
-            failedCounter.increment();
+            metricService.incrementFailed();
             throw e;
         }
     }
 
     public Optional<ContactDTO> searchContactByName(String firstName, String lastName) {
-        searchCounter.increment();
+        metricService.incrementSearch();
         String id = firstName + "_" + lastName;
-        return searchTimer.record(() -> {
+        return metricService.timeSearch(() -> {
             Optional<ContactDTO> result = getContactById(id);
-            if (result.isEmpty()) emptyCounter.increment();
+            if (result.isEmpty()) metricService.incrementEmpty();
             return result;
         });
     }
