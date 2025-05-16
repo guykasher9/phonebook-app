@@ -13,7 +13,7 @@ import io.micrometer.core.instrument.Counter;
 @Service
 public class ContactService {
     private final ContactRepository contactRepository;
-    private final Counter addCounter, searchCounter, deleteCounter, failedCounter, emptyCounter;
+    private final Counter addCounter, searchCounter, deleteCounter, editCounter, listCounter, failedCounter, emptyCounter;
     private final Timer searchTimer;
 
     @Autowired
@@ -22,12 +22,15 @@ public class ContactService {
         this.addCounter = registry.counter("phonebook.requests", "type", "add");
         this.searchCounter = registry.counter("phonebook.requests", "type", "search");
         this.deleteCounter = registry.counter("phonebook.requests", "type", "delete");
+        this.editCounter = registry.counter("phonebook.requests", "type", "edit");
+        this.listCounter = registry.counter("phonebook.requests", "type", "list");
         this.failedCounter = registry.counter("phonebook.requests.failed");
         this.emptyCounter = registry.counter("phonebook.requests.empty");
         this.searchTimer = registry.timer("phonebook.search.timer");
     }
 
     public List<ContactDTO> getContacts(int page, int size) {
+        listCounter.increment();
         return StreamSupport.stream(contactRepository.findAll().spliterator(), false)
                 .skip((long) page * size)
                 .limit(size)
@@ -47,6 +50,7 @@ public class ContactService {
     }
 
     public Optional<ContactDTO> editContact(String id, ContactDTO contact) {
+        editCounter.increment();
         try {
             if (contactRepository.existsById(id)) {
                 contact.setId(id);
