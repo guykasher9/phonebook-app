@@ -36,7 +36,7 @@ Each contact includes:
 
 ### Prerequisites
 
-- [Java 17+](https://adoptopenjdk.net/)
+- [Java 21+](https://adoptopenjdk.net/)
 - [Maven](https://maven.apache.org/) or [Gradle](https://gradle.org/) (depending on your build tool)
 - [Docker](https://www.docker.com/)
 
