@@ -78,6 +78,18 @@ This will start the phonebook API server, Redis, Prometheus, and Grafana.
 
 ---
 
+## Build with Docker Only
+
+If you do not have Java or Maven installed, you can build the project using Docker:
+
+```sh
+docker build -f Dockerfile.builder -o . .
+```
+
+This will produce the built JAR file in your current directory, inside an `/output` folder.
+
+---
+
 ## Testing
 
 To run the tests:
