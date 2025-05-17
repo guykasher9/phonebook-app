@@ -37,7 +37,7 @@ Each contact includes:
 ### Prerequisites
 
 - [Java 21+](https://adoptopenjdk.net/)
-- [Maven](https://maven.apache.org/) or [Gradle](https://gradle.org/) (depending on your build tool)
+- [Maven](https://maven.apache.org/)
 - [Docker](https://www.docker.com/)
 
 ---
@@ -110,7 +110,9 @@ If you use **Maven**:
 
 Below is an example of a Grafana dashboard visualizing metrics from the phonebook API:
 
-![Grafana Dashboard Example](docs/grafana-dashboard-example.png)
+![image](https://github.com/user-attachments/assets/24e7bf72-e371-4c4e-8338-1a74460cfa28)
+
+
 
 This dashboard shows request counts by type, requests per URI, and JVM memory usage, helping you monitor your API in real time.
 
