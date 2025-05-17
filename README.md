@@ -102,16 +102,40 @@ If you use **Maven**:
 
 ## Notes
 
-- The project uses Docker Compose for orchestration.
-- All configuration is in `src/main/resources/application.properties`.
-- For development, you can run the app locally or inside Docker.
+1. **Handling Contacts with Equal Names**
+   - If multiple contacts have the same first and last name, each contact is assigned a unique UUID as its ID.
+   - Both `firstName` and `lastName` fields are indexed for efficient search.
+   - When searching for contacts with the same name, results are paginated. If more than 10 results are found, only the first page is returned with a message.
+
+2. **Persistent Data Storage**
+   - Redis and Prometheus data are stored in Docker volumes, ensuring data persists even if containers are stopped or removed (as long as you are on the same machine).
+
+3. **Search and Edit: Handling Non-Existent Contacts**
+   - The API returns a clear message if a contact is not found during search, edit, or delete operations.
+   - If multiple matches are found for edit/delete, the API asks for a specific ID.
+
+4. **Logging**
+   - Logging is implemented in the service layer using SLF4J, logging key actions and errors for easier debugging and monitoring.
+
+5. **Grafana for Monitoring**
+   - Grafana is included for real-time monitoring and visualization of API metrics (request counts, errors, JVM stats, etc.).
+
+6. **Testing**
+   - The project includes unit tests for controllers, services, and error handling, ensuring robust and reliable code.
+
+7. **Service-Oriented Design**
+   - The application is structured with clear separation between controller, service, and repository layers, following best practices for maintainability and scalability.
+
+8. **Configuration Files**
+   - All configuration (e.g., Redis, Prometheus, application settings) is managed via `application.properties` and Docker Compose files, making it easy to adjust settings for different environments.
+
+---
 
 ## Example Grafana Dashboard
 
 Below is an example of a Grafana dashboard visualizing metrics from the phonebook API:
 
 ![image](https://github.com/user-attachments/assets/24e7bf72-e371-4c4e-8338-1a74460cfa28)
-
 
 
 This dashboard shows request counts by type, requests per URI, and JVM memory usage, helping you monitor your API in real time.
