@@ -124,4 +124,31 @@ public class ContactServiceTest {
         assertTrue(result.isPresent());
         verify(metricService).incrementSearch();
     }
+
+    @Test
+    void testGetContactsPagination() {
+        List<ContactDTO> contacts = new ArrayList<>();
+        for (int i = 0; i < 25; i++) {
+            contacts.add(new ContactDTO("Name" + i, "Surname" + i, "12345" + i, "Address" + i));
+        }
+        when(contactRepository.findAll()).thenReturn(contacts);
+
+        // Page 0, size 10: should return contacts 0-9
+        List<ContactDTO> page0 = contactService.getContacts(0, 10);
+        assertEquals(10, page0.size());
+        assertEquals("Name0", page0.get(0).getFirstName());
+        assertEquals("Name9", page0.get(9).getFirstName());
+
+        // Page 1, size 10: should return contacts 10-19
+        List<ContactDTO> page1 = contactService.getContacts(1, 10);
+        assertEquals(10, page1.size());
+        assertEquals("Name10", page1.get(0).getFirstName());
+        assertEquals("Name19", page1.get(9).getFirstName());
+
+        // Page 2, size 10: should return contacts 20-24 (5 contacts)
+        List<ContactDTO> page2 = contactService.getContacts(2, 10);
+        assertEquals(5, page2.size());
+        assertEquals("Name20", page2.get(0).getFirstName());
+        assertEquals("Name24", page2.get(4).getFirstName());
+    }
 } 
