@@ -2,13 +2,17 @@ package com.phonebook;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 import java.io.Serializable;
+import java.util.UUID;
 
 @RedisHash("Contact")
 public class ContactDTO implements Serializable {
     @Id
     private String id;
+    @Indexed
     private String firstName;
+    @Indexed
     private String lastName;
     private String phoneNumber;
     private String address;
@@ -20,7 +24,7 @@ public class ContactDTO implements Serializable {
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        this.id = firstName + "_" + lastName;
+        this.id = UUID.randomUUID().toString();
     }
 
     public String getId() { return id; }

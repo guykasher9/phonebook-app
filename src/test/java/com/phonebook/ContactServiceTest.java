@@ -46,7 +46,8 @@ public class ContactServiceTest {
     void testAddContact() {
         when(contactRepository.save(any(ContactDTO.class))).thenReturn(contact);
         ContactDTO saved = contactService.addContact(contact);
-        assertEquals("John_Doe", saved.getId());
+        assertNotNull(saved.getId());
+        assertFalse(saved.getId().isEmpty());
         verify(metricService).incrementAdd();
     }
 
@@ -77,55 +78,6 @@ public class ContactServiceTest {
     }
 
     @Test
-    void testDeleteContact() {
-        doNothing().when(contactRepository).deleteById(anyString());
-        contactService.deleteContact("John_Doe");
-        verify(metricService).incrementDelete();
-    }
-
-    @Test
-    void testDeleteContactException() {
-        doThrow(new RuntimeException()).when(contactRepository).deleteById(anyString());
-        assertThrows(RuntimeException.class, () -> contactService.deleteContact("John_Doe"));
-        verify(metricService).incrementDelete();
-        verify(metricService).incrementFailed();
-    }
-
-    @Test
-    void testGetContactByIdFound() {
-        when(contactRepository.findById(anyString())).thenReturn(Optional.of(contact));
-        Optional<ContactDTO> result = contactService.getContactById("John_Doe");
-        assertTrue(result.isPresent());
-    }
-
-    @Test
-    void testGetContactByIdNotFound() {
-        when(contactRepository.findById(anyString())).thenReturn(Optional.empty());
-        Optional<ContactDTO> result = contactService.getContactById("John_Doe");
-        assertTrue(result.isEmpty());
-        verify(metricService).incrementEmpty();
-    }
-
-    @Test
-    void testGetContactByIdException() {
-        when(contactRepository.findById(anyString())).thenThrow(new RuntimeException());
-        assertThrows(RuntimeException.class, () -> contactService.getContactById("John_Doe"));
-        verify(metricService).incrementFailed();
-    }
-
-    @Test
-    void testSearchContactByName() {
-        when(metricService.timeSearch(any())).then(invocation -> {
-            java.util.function.Supplier<?> supplier = invocation.getArgument(0);
-            return supplier.get();
-        });
-        when(contactRepository.findById(anyString())).thenReturn(Optional.of(contact));
-        Optional<ContactDTO> result = contactService.searchContactByName("John", "Doe");
-        assertTrue(result.isPresent());
-        verify(metricService).incrementSearch();
-    }
-
-    @Test
     void testGetContactsPagination() {
         List<ContactDTO> contacts = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
@@ -150,5 +102,74 @@ public class ContactServiceTest {
         assertEquals(5, page2.size());
         assertEquals("Name20", page2.get(0).getFirstName());
         assertEquals("Name24", page2.get(4).getFirstName());
+    }
+
+    @Test
+    void testSearchContactByNamePagination() {
+        List<ContactDTO> contacts = new ArrayList<>();
+        for (int i = 0; i < 15; i++) {
+            contacts.add(new ContactDTO("John", "Doe", "12345" + i, "Address" + i));
+        }
+        when(contactRepository.findByFirstNameAndLastName("John", "Doe")).thenReturn(contacts);
+
+        // Page 0, size 10
+        List<ContactDTO> page0 = contactService.searchContactByName("John", "Doe", 0, 10);
+        assertEquals(10, page0.size());
+        assertEquals("123450", page0.get(0).getPhoneNumber());
+        assertEquals("123459", page0.get(9).getPhoneNumber());
+
+        // Page 1, size 10
+        List<ContactDTO> page1 = contactService.searchContactByName("John", "Doe", 1, 10);
+        assertEquals(5, page1.size());
+        assertEquals("1234510", page1.get(0).getPhoneNumber());
+        assertEquals("1234514", page1.get(4).getPhoneNumber());
+    }
+
+    @Test
+    void testFindContactByIdFound() {
+        when(contactRepository.findById("some-id")).thenReturn(Optional.of(contact));
+        Optional<ContactDTO> result = contactService.findContactById("some-id");
+        assertTrue(result.isPresent());
+        assertEquals(contact, result.get());
+    }
+
+    @Test
+    void testFindContactByIdNotFound() {
+        when(contactRepository.findById("some-id")).thenReturn(Optional.empty());
+        Optional<ContactDTO> result = contactService.findContactById("some-id");
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testFindContactsByName() {
+        List<ContactDTO> contacts = Arrays.asList(
+            new ContactDTO("John", "Doe", "1234567890", "123 Main St"),
+            new ContactDTO("John", "Doe", "1234567891", "456 Elm St")
+        );
+        when(contactRepository.findByFirstNameAndLastName("John", "Doe")).thenReturn(contacts);
+        List<ContactDTO> result = contactService.findContactsByName("John", "Doe");
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void testDeleteContactByIdFound() {
+        when(contactRepository.existsById("some-id")).thenReturn(true);
+        doNothing().when(contactRepository).deleteById("some-id");
+        boolean deleted = contactService.deleteContactById("some-id");
+        assertTrue(deleted);
+    }
+
+    @Test
+    void testDeleteContactByIdNotFound() {
+        when(contactRepository.existsById("some-id")).thenReturn(false);
+        boolean deleted = contactService.deleteContactById("some-id");
+        assertFalse(deleted);
+    }
+
+    @Test
+    void testDeleteContactByIdException() {
+        when(contactRepository.existsById("some-id")).thenReturn(true);
+        doThrow(new RuntimeException()).when(contactRepository).deleteById("some-id");
+        assertThrows(RuntimeException.class, () -> contactService.deleteContactById("some-id"));
     }
 } 

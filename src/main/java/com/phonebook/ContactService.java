@@ -34,7 +34,6 @@ public class ContactService {
 
     public ContactDTO addContact(ContactDTO contact) {
         metricService.incrementAdd();
-        contact.setId(contact.getFirstName() + "_" + contact.getLastName());
         return contactRepository.save(contact);
     }
 
@@ -53,10 +52,16 @@ public class ContactService {
         }
     }
 
-    public void deleteContact(String id) {
+    public boolean deleteContactById(String id) {
         metricService.incrementDelete();
         try {
-            contactRepository.deleteById(id);
+            if (contactRepository.existsById(id)) {
+                contactRepository.deleteById(id);
+                return true;
+            } else {
+                metricService.incrementEmpty();
+                return false;
+            }
         } catch (Exception e) {
             metricService.incrementFailed();
             throw e;
@@ -74,13 +79,32 @@ public class ContactService {
         }
     }
 
-    public Optional<ContactDTO> searchContactByName(String firstName, String lastName) {
+    public List<ContactDTO> searchContactByName(String firstName, String lastName, int page, int size) {
         metricService.incrementSearch();
-        String id = firstName + "_" + lastName;
-        return metricService.timeSearch(() -> {
-            Optional<ContactDTO> result = getContactById(id);
+        List<ContactDTO> results = contactRepository.findByFirstNameAndLastName(firstName, lastName);
+        return results.stream()
+                .skip((long) page * size)
+                .limit(size)
+                .collect(Collectors.toList());
+    }
+
+    public int countByFirstNameAndLastName(String firstName, String lastName) {
+        return contactRepository.findByFirstNameAndLastName(firstName, lastName).size();
+    }
+
+    public Optional<ContactDTO> findContactById(String id) {
+        try {
+            Optional<ContactDTO> result = contactRepository.findById(id);
             if (result.isEmpty()) metricService.incrementEmpty();
             return result;
-        });
+        } catch (Exception e) {
+            metricService.incrementFailed();
+            throw e;
+        }
+    }
+
+    public List<ContactDTO> findContactsByName(String firstName, String lastName) {
+        metricService.incrementSearch();
+        return contactRepository.findByFirstNameAndLastName(firstName, lastName);
     }
 } 

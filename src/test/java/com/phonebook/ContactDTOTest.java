@@ -11,7 +11,8 @@ public class ContactDTOTest {
         assertEquals("Doe", contact.getLastName());
         assertEquals("1234567890", contact.getPhoneNumber());
         assertEquals("123 Main St", contact.getAddress());
-        assertEquals("John_Doe", contact.getId());
+        assertNotNull(contact.getId());
+        assertFalse(contact.getId().isEmpty());
 
         contact.setFirstName("Jane");
         contact.setLastName("Smith");

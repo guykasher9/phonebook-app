@@ -42,13 +42,4 @@ public class MetricServiceTest {
     void testIncrementFailed() { metricService.incrementFailed(); verify(counter).increment(); }
     @Test
     void testIncrementEmpty() { metricService.incrementEmpty(); verify(counter).increment(); }
-
-    @Test
-    void testTimeSearch() {
-        Supplier<String> supplier = mock(Supplier.class);
-        when(timer.record(any(Supplier.class))).thenReturn("result");
-        String result = metricService.timeSearch(supplier);
-        verify(timer).record(any(Supplier.class));
-        assert result.equals("result");
-    }
 } 

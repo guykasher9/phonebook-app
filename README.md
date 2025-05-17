@@ -2,7 +2,7 @@
 
 ## Main Objective
 
-Create a simple phone book (contacts) web server API, similar to any contacts book on your personal phone.
+Create a simple phone book (contacts) web server API.
 
 ---
 
@@ -24,11 +24,11 @@ Each contact includes:
 
 ### API Endpoints
 
-- **Get contacts**: Retrieve contacts with pagination (maximum 10 per page)
-- **Search contact**: Find contacts by name
-- **Add contact**: Add a new contact
-- **Edit contact**: Update an existing contact
-- **Delete contact**: Remove a contact
+- **Get contacts**: `GET /api/contacts` — Retrieve contacts with pagination (maximum 10 per page)
+- **Search contact**: `GET /api/contacts/search` — Find contacts by first and last name, with pagination (returns a message if more than 10 results are found)
+- **Add contact**: `POST /api/contacts` — Add a new contact
+- **Edit contact**: `POST /api/contacts/edit` — Update an existing contact (was previously PUT)
+- **Delete contact**: `DELETE /api/contacts/delete` — Remove a contact
 
 ---
 
@@ -99,11 +99,6 @@ If you use **Maven**:
 ./mvnw test
 ```
 
-If you use **Gradle**:
-```sh
-./gradlew test
-```
-
 ---
 
 ## Notes
@@ -112,8 +107,11 @@ If you use **Gradle**:
 - All configuration is in `src/main/resources/application.properties`.
 - For development, you can run the app locally or inside Docker.
 
----
+## Example Grafana Dashboard
 
-## License
+Below is an example of a Grafana dashboard visualizing metrics from the phonebook API:
 
-This project is licensed under the MIT License. 
+![Grafana Dashboard Example](docs/grafana-dashboard-example.png)
+
+This dashboard shows request counts by type, requests per URI, and JVM memory usage, helping you monitor your API in real time.
+

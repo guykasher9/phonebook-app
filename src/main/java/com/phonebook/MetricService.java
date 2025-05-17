@@ -28,10 +28,4 @@ public class MetricService {
     public void incrementList() { listCounter.increment(); }
     public void incrementFailed() { failedCounter.increment(); }
     public void incrementEmpty() { emptyCounter.increment(); }
-    public <T> T recordSearch(Timer.Sample sample, java.util.function.Supplier<T> supplier) {
-        return searchTimer.record(supplier);
-    }
-    public <T> T timeSearch(java.util.function.Supplier<T> supplier) {
-        return searchTimer.record(supplier);
-    }
 } 
