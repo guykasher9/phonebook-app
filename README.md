@@ -110,7 +110,8 @@ If you use **Maven**:
 
 Below is an example of a Grafana dashboard visualizing metrics from the phonebook API:
 
-![image](https://github.com/user-attachments/assets/2d8925d9-bb2a-461e-abfa-bd8e25204cc5)
+![image](https://github.com/user-attachments/assets/24e7bf72-e371-4c4e-8338-1a74460cfa28)
+
 
 
 This dashboard shows request counts by type, requests per URI, and JVM memory usage, helping you monitor your API in real time.
