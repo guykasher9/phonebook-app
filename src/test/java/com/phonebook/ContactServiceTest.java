@@ -9,7 +9,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class ContactServiceTest {
+public class ContactServiceTest {
     @Mock
     private ContactRepository contactRepository;
     @Mock

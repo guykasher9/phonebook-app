@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class RedisConfigTest {
+public class RedisConfigTest {
     @Autowired
     private RedisTemplate<String, ContactDTO> redisTemplate;
 

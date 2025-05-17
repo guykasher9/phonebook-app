@@ -3,7 +3,7 @@ package com.phonebook;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ContactDTOTest {
+public class ContactDTOTest {
     @Test
     void testConstructorAndGettersSetters() {
         ContactDTO contact = new ContactDTO("John", "Doe", "1234567890", "123 Main St");

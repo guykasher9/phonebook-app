@@ -10,7 +10,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.function.Supplier;
 import static org.mockito.Mockito.*;
 
-class MetricServiceTest {
+public class MetricServiceTest {
     @Mock
     private MeterRegistry meterRegistry;
     @Mock
