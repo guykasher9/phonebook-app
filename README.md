@@ -27,8 +27,8 @@ Each contact includes:
 - **Get contacts**: `GET /api/contacts` — Retrieve contacts with pagination (maximum 10 per page)
 - **Search contact**: `GET /api/contacts/search` — Find contacts by first and last name, with pagination (returns a message if more than 10 results are found)
 - **Add contact**: `POST /api/contacts` — Add a new contact
-- **Edit contact**: `POST /api/contacts/edit` — Update an existing contact (was previously PUT)
-- **Delete contact**: `DELETE /api/contacts/delete` — Remove a contact
+- **Edit contact**: `POST /api/contacts/edit` — Update an existing contact. If multiple contacts have the same first and last name, you must specify the `id` to edit the correct one.
+- **Delete contact**: `DELETE /api/contacts/delete` — Remove a contact. If multiple contacts have the same first and last name, you must specify the `id` to delete the correct one.
 
 ---
 
@@ -42,7 +42,7 @@ Each contact includes:
 
 ---
 
-## Build and Run Instructions
+## Build and Run Instructions (Build with Docker only in the next section)
 
 ### 1. Clone the Repository
 
@@ -98,7 +98,6 @@ If you use **Maven**:
 ```sh
 ./mvnw test
 ```
-
 ---
 
 ## Notes
