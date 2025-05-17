@@ -1,7 +1,6 @@
 package com.phonebook;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.Counter;
 import org.springframework.stereotype.Service;
 

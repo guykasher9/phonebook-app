@@ -16,6 +16,7 @@ class GlobalExceptionHandlerTest {
 
         ResponseEntity<Object> response = handler.handleAllExceptions(ex, request);
 
+        assertNotNull(response.getBody());
         assertEquals(500, response.getStatusCode().value());
         assertTrue(response.getBody().toString().contains("Test error"));
         assertTrue(response.getBody().toString().contains("Internal Server Error"));
